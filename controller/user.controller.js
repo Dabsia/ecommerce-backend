@@ -15,3 +15,38 @@ export const createUser = async (req, res) => {
         data: user
     });
 };  
+
+
+export const getAllUsers = async (req, res) => {
+    try{
+        const users = await User.find();
+        res.status(200).json({
+            success: true,
+            message: "Users fetched successfully",
+            data: users
+        });
+    }
+    catch(error){
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+export const getUser = async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+    try{
+        const user = await User.findById(id);
+        res.status(200).json({
+            success: true,
+            message: "User fetched successfully",
+            data: user
+        });
+    }
+    catch(error){
+        res.status(500).json({ message: error.message });
+    }
+   
+};
