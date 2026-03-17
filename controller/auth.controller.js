@@ -24,44 +24,11 @@ export const createUser = async (req, res) => {
 };  
 
 
-export const getAllUsers = async (req, res) => {
-    try{
-        const users = await User.find();
-        res.status(200).json({
-            success: true,
-            message: "Users fetched successfully",
-            data: users
-        });
-    }
-    catch(error){
-        res.status(500).json({ message: error.message });
-    }
-};
 
-
-export const getUser = async (req, res) => {
-    const { id } = req.params;
-    if (!id) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
-    try{
-        const user = await User.findById(id);
-        res.status(200).json({
-            success: true,
-            message: "User fetched successfully",
-            data: user
-        });
-    }
-    catch(error){
-        res.status(500).json({ message: error.message });
-    }
-   
-};
-
-export const login = async() => {
+export const login = async(req, res) => {
     const {email, password} = req.body
     try {
-        const user = await User.findById(id);
+        const user = await User.findOne({email});
         if (!email || !password){
             res.status(400).json({message: 'Email and Password is required'})
         }
@@ -69,8 +36,14 @@ export const login = async() => {
             res.status(400).json({message: 'Incorrect email or password'})
         }
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(isMatch)
+        if (!isMatch){
+            res.status(400).json({message: 'Incorrect email or password'})
+        }
+        else{
+            res.status(200).json({message: "Login successful", status: 'success', data: user})
+        }
+      
     } catch (error) {
-        
+        res.status(500).json({message: 'Something went wrong'})
     }
 }
