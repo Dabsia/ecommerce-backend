@@ -1,6 +1,7 @@
 import User from "../model/User.model.js";
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../services/email.js";
 
 export const createUser = async (req, res) => {
     const { name, email, password, role } = req.body;
@@ -22,6 +23,11 @@ export const createUser = async (req, res) => {
         message: "User created successfully",
         data: user
     });
+    sendEmail({
+        to: user.email,
+        subject: "Welcome to Ecommerce!",
+        html: `<h1>Hello ${user.name} You just created your Account</h1>`
+      });
 };  
 
 

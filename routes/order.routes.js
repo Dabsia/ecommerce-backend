@@ -7,14 +7,15 @@ import {
     updateOrder,
     deleteOrder
 } from '../controller/order.controller.js'
+import { protect } from '../middleware/index.js'
 
 const router = express.Router()
 
-router.post('/', createOrder)
-router.get('/', getOrders)
-router.get('/:id', getOrderById)
-router.get('/user/:userId', getOrdersByUser)
-router.put('/:id', updateOrder)
-router.delete('/:id', deleteOrder)
+router.post('/', protect, createOrder)
+router.get('/', protect, getOrders)
+router.get('/:id', protect, getOrderById)
+router.get('/user/:userId', protect, getOrdersByUser)
+router.put('/:id', protect, updateOrder)
+router.delete('/:id', protect, deleteOrder)
 
 export default router
