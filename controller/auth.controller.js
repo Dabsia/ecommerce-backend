@@ -1,6 +1,7 @@
 import User from "../model/User.model.js";
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
+import crypto from 'crypto'
 import { sendEmail } from "../services/email.js";
 
 export const createUser = async (req, res) => {
@@ -66,34 +67,40 @@ export const login = async(req, res) => {
     }
 }
 
-export const resetPassword = async(req, res) => {
+
+
+export const resetPassword = (req, res) => {
     const {email} = req.body
-    try{
-        const user = await User.findOne({email});
-        if (!email){
-            res.status(400).json({message: 'Email is required'})
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err){
+            console.log(err)
         }
-        if (!user){
-            res.status(400).json({message: 'Email not found'})
-        }
-        else{
+        const token = buffer.toString('hex')
+        User.findOne({email}).then(user => {
+            if (!user){
+                res.status(200).json({
+                    success: false,
+                    message: "No account with that email found",
+                });
+            }
+      
+            user.resetToken = token
+            user.resetTokenExpiration = Date.now() +  3600000
+            user.save()
+        }).then(result => {
+            const link = `https://dabojohnson.netlify.app/reset/${token}`
+            sendEmail({
+                to: email,
+                subject: "Welcome to Ecommerce!",
+                html: `<h1>You requested a password reset</h1>
+                    <a href = ${link} >Click this link to set a  password</a>
+                `
+            });
             res.status(200).json({
                 success: true,
-                message: "Check your mail, A link has been sent to you to reset your password",
-               
+                message: "An Email has been sent to you",
             });
-            sendEmail({
-                to: user.email,
-                subject: "Welcome to Ecommerce!",
-                html: `<h1>Hello ${user.name} You just reset your password</h1>
-                
-                    <a href = 'https://dabojohnson.netlify.app' >Click this link to reset your pasasword</a>
-                `
-              });
-        }
-
-    }
-    catch(err){
-        console.log(err)
-    }
+        })
+        .catch(err => console.log(err ))
+    })
 }
