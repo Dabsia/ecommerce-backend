@@ -65,3 +65,35 @@ export const login = async(req, res) => {
         res.status(500).json({message: 'Something went wrong'})
     }
 }
+
+export const resetPassword = async(req, res) => {
+    const {email} = req.body
+    try{
+        const user = await User.findOne({email});
+        if (!email){
+            res.status(400).json({message: 'Email is required'})
+        }
+        if (!user){
+            res.status(400).json({message: 'Email not found'})
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: "Check your mail, A link has been sent to you to reset your password",
+               
+            });
+            sendEmail({
+                to: user.email,
+                subject: "Welcome to Ecommerce!",
+                html: `<h1>Hello ${user.name} You just reset your password</h1>
+                
+                    <a href = 'https://dabojohnson.netlify.app' >Click this link to reset your pasasword</a>
+                `
+              });
+        }
+
+    }
+    catch(err){
+        console.log(err)
+    }
+}
