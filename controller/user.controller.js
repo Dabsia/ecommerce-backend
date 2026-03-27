@@ -58,19 +58,3 @@ export const getUser = async (req, res) => {
    
 };
 
-export const login = async() => {
-    const {email, password} = req.body
-    try {
-        const user = await User.findById(id);
-        if (!email || !password){
-            res.status(400).json({message: 'Email and Password is required'})
-        }
-        if (!user){
-            res.status(400).json({message: 'Incorrect email or password'})
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log(isMatch)
-    } catch (error) {
-        
-    }
-}

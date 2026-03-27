@@ -1,4 +1,5 @@
 import Product from "../model/Product.model.js";
+import {validationResult} from 'express-validator'
 
 export const getProducts = async (req, res) => {
     try {
@@ -14,6 +15,10 @@ export const getProducts = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
+    const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
     const { name, price, description, image, category } = req.body; // destructuring the request body
     if (!name || !price || !description || !image || !category) {
         return res.status(400).json({ message: "All fields are required" });
@@ -57,6 +62,10 @@ export const getProductById = async (req, res) => {
 };
 
 export const updateProduct = async (req, res) => {
+    const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
     const { id } = req.params; // destructuring the request params
     const { name, price, description, image, category } = req.body; // destructuring the request body
     if (!id) {

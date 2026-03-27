@@ -3,8 +3,14 @@ import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
 import crypto from 'crypto'
 import { sendEmail } from "../services/email.js";
+import {validationResult} from 'express-validator'
 
 export const createUser = async (req, res) => {
+
+    const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
     const { name, email, password, role } = req.body;
     
     if (!name || !email || !password || !role) {
@@ -34,6 +40,10 @@ export const createUser = async (req, res) => {
 
 
 export const login = async(req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
     const {email, password} = req.body
     try {
         const user = await User.findOne({email});
