@@ -1,11 +1,6 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    },
     name: {
         type: String,
         required: true
@@ -19,9 +14,20 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     image: {
-        type: String,
-        required: true
-    },
+        url: {
+          type: String,
+          required: true,
+        },
+        publicId: {
+          type: String,
+          required: true,
+        },
+      },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
     category: {
         type: String,
         required: true

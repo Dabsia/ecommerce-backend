@@ -1,15 +1,16 @@
-import { getProducts, createProduct, getProductById, updateProduct, deleteProduct} from "../controller/products.controller.js   ";
+import { getAllProducts, createProduct, getProductById, updateProduct, deleteProduct} from "../controller/products.controller.js   ";
 import express from "express";
 import {adminOnly, protect} from "../middleware/index.js";
 import { productValidator } from "../validators/productValidator.js";
+import { uploadSingle } from "../middleware/imageUpload.js";
 
 const router = express.Router();
 
-router.get("/", protect, adminOnly, getProducts);
-router.post("/", protect, productValidator, createProduct);
+router.get("/", protect, adminOnly, getAllProducts);
+router.post("/", protect, productValidator, uploadSingle("image"), createProduct);
 
 router.get("/:id", protect, getProductById);
-router.patch("/:id", protect, productValidator, updateProduct);
+router.patch("/:id", protect, productValidator, uploadSingle("image"), updateProduct);
 router.delete("/:id", protect, deleteProduct);
 
 
